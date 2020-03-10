@@ -4,6 +4,7 @@
  */
 const http = require('http');
 const express = require('express');
+const path = require('path');
 const session = require('express-session');
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const bodyParser = require('body-parser');
@@ -412,9 +413,12 @@ app.post('/sms', (req, res) => {
 
 });
 
+var indexPg = path.join(__dirname, "./public/index.html");
+
 
 app.get("/", function (req, res) {
-  res.send("SPACE text messaging service is currently operational");
+  res.sendFile(indexPg);
+  //res.send("SPACE text messaging service is currently operational");
   //res.sendFile(__dirname + '/index.html');
 });
 
