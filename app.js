@@ -413,11 +413,11 @@ app.post('/sms', (req, res) => {
 });
 
 app.get("/", function (req, res) {
-  res.send("Hello World whats up!");
+  res.send("SPACE text messaging service is currently operational.");
 });
 
 app.get("/sms", function (req, res) {
-  res.send("Text SMS is operational.");
+  res.send("SPACE text messaging service is currently operational.");
 });
 
 
