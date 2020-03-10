@@ -413,16 +413,17 @@ app.post('/sms', (req, res) => {
 });
 
 app.get("/", function (req, res) {
-  res.send("SPACE text messaging service is currently operational.");
+  //res.send("SPACE text messaging service is currently operational");
+  res.sendFile(__dirname + '/index.html');
 });
 
 app.get("/sms", function (req, res) {
   res.send("SPACE text messaging service is currently operational.");
 });
 
-
-http.createServer(app).listen(process.env.PORT, () => {
-    console.log('Express server listening on port 5050');
+var port = process.env.PORT || 5000;
+http.createServer(app).listen(port, () => {
+    console.log('Express server listening on port ' + port);
 });
 
 
