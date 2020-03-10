@@ -10,6 +10,17 @@ const session = require('express-session');
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const bodyParser = require('body-parser');
 
+var fs = require("fs");
+
+function read(f) {
+  return fs.readFileSync(f).toString();
+}
+function include(f) {
+  eval.apply(global, [read(f)]);
+}
+
+
+
 const app = express();
 
 app.use(express.json());
@@ -422,15 +433,15 @@ app.post('/sms', (req, res) => {
 });
 
 app.get("/", function (req, res) {
-/*
+
   res.render('pages/index',{users : [
             { name: 'John' },
             { name: 'Mike' },
             { name: 'Samantha' }
   ]});
-*/
+
   //res.sendFile(indexPg);
-  res.send("SPACE text messaging service is currently operational");
+  //res.send("SPACE text messaging service is currently operational");
   //res.sendFile(__dirname + '/index.html');
 });
 
