@@ -4,6 +4,7 @@
  */
 const http = require('http');
 const express = require('express');
+var ejs = require('ejs');
 const path = require('path');
 const session = require('express-session');
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
