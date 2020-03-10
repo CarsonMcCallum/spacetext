@@ -416,6 +416,9 @@ http.createServer(app).listen(process.env.PORT, () => {
     console.log('Express server listening on port 5050');
 });
 
+app.get("/", function (req, res) {
+  res.send("Hello World whats up!");
+});
 
 /*
 var express = require("express");
