@@ -11,12 +11,19 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')))
+.set('views', path.join(__dirname, 'views'))
+.set('view engine', 'ejs');
+
+
 app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(session({
     secret: 'portal-sms-super-secret-sess-phrase'
 }));
+
 
 
 var Airtable = require('airtable');
@@ -413,11 +420,15 @@ app.post('/sms', (req, res) => {
 
 });
 
-var indexPg = path.join(__dirname, "./public/index.html");
-
-
 app.get("/", function (req, res) {
-  res.sendFile(indexPg);
+
+  res.render('pages/index',{users : [
+            { name: 'John' },
+            { name: 'Mike' },
+            { name: 'Samantha' }
+  ]});
+
+  //res.sendFile(indexPg);
   //res.send("SPACE text messaging service is currently operational");
   //res.sendFile(__dirname + '/index.html');
 });
