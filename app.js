@@ -202,7 +202,7 @@ var classOptionPossibilities = ['1', '2', '3', '4', '5', '6', '7', '8'];
 var fullClassOptions = [];
 
 
-app.post('/text', (req, res) => {
+app.post('/sms', (req, res) => {
     const smsCount = req.session.counter || 0;
     var choosingClassOpton = req.session.choosingClassOption || 0; // If viewing schedule, listen for class option ids in message.
     var classOptionSelected = req.session.classOptionSelected || 0;
