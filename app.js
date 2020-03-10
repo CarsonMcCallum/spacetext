@@ -412,9 +412,10 @@ app.post('/sms', (req, res) => {
 
 });
 
+
 app.get("/", function (req, res) {
-  //res.send("SPACE text messaging service is currently operational");
-  res.sendFile(__dirname + '/index.html');
+  res.send("SPACE text messaging service is currently operational");
+  //res.sendFile(__dirname + '/index.html');
 });
 
 app.get("/sms", function (req, res) {
