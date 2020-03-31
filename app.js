@@ -1,5 +1,7 @@
 /*
- *  Track a session using cookies
+ * SPACE Text messaging service built with Node, express, twilio.
+ * Heroku app: spacetext
+ * Track an individual session using express-session cookies.
  *
  */
 const http = require('http');
@@ -9,8 +11,11 @@ const path = require('path');
 const session = require('express-session');
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const bodyParser = require('body-parser');
-
 var fs = require("fs");
+
+var _twilioPhoneNumber = "+1 415 223 8333";
+
+
 
 function read(f) {
   return fs.readFileSync(f).toString();
@@ -20,9 +25,8 @@ function include(f) {
 }
 
 
-
+// Init express app.
 const app = express();
-
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')))
 .set('views', path.join(__dirname, 'views'))
@@ -44,6 +48,10 @@ var base = new Airtable({
 }).base('appAf7Pd5paoTJGMg');
 
 
+/*
+* Custom class for managing all Airtable data.
+*
+*/
 var AirtableManager = function() {
 
     var _this = this;
@@ -203,13 +211,15 @@ var AirtableManager = function() {
 
 
 
-
+// Init Airtable.
 var airtableManager = new AirtableManager();
 airtableManager.getSchedule();
 airtableManager.getExistingPhoneNumberSignups();
 
-// Refresh
-
+/* Refresh interval to get latest schedule every 2 minutes.
+* TO-DO: Figure out faster way to retrieve data, make sure data isn't absent during the call time.
+*
+*/
 var updateInterval = setInterval(function() {
     console.log('getExistingPhoneNumberSignups -- ')
     //airtableManager.resetData();
@@ -239,7 +249,7 @@ app.post('/sms', (req, res) => {
 
     console.log(req.body);
 
-    airtableManager.logUserEvent(phoneNum, 'Message', usermsg);
+    airtableManager.logUserEvent(phoneNum, 'Message', usermsg); // Capture all incoming messages.
 
     // All inbound user messages are trimmed, stripped of punctuation, and made lowercase.
     usermsg = usermsg.trim();
@@ -278,16 +288,12 @@ app.post('/sms', (req, res) => {
             }
             message += lineBreak(2);
         }
-
         message += lineBreak(2);
-        //message += "Book it by replying with the class number (Ex. “1”)";
-        //airtableManager.getSchedule();
     }
 
 
     // Start analyzing inbound user message.
     // First check if phone number is on waitlist or not.
-
     var phoneNumberAlreadyWaitlisted = airtableManager.existingPhoneNumbersArray.find(person => person.phone === phoneNum);
     console.log(phoneNumberAlreadyWaitlisted)
     console.log('phoneNumberAlreadyWaitlisted = ' + phoneNumberAlreadyWaitlisted);
@@ -411,6 +417,8 @@ app.post('/sms', (req, res) => {
 
     const twiml = new MessagingResponse();
     twiml.message(message);
+    airtableManager.logUserEvent(_twilioPhoneNumber, 'Outbound', message);
+    airtableManager.logUserEvent(phoneNum, 'Message', usermsg);
 
     /*
       res.writeHead(200, {'Content-Type': 'text/xml'});
@@ -433,13 +441,6 @@ app.post('/sms', (req, res) => {
 });
 
 app.get("/", function (req, res) {
-
-/*  res.render('pages/index',{users : [
-            { name: 'John' },
-            { name: 'Mike' },
-            { name: 'Samantha' }
-  ]});
-*/
   //res.sendFile(indexPg);
   res.send("SPACE text messaging service is currently operational");
   //res.sendFile(__dirname + '/index.html');
