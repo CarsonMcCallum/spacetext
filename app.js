@@ -266,7 +266,7 @@ app.post('/sms', (req, res) => {
         return resp;
     }
 
-
+/*
     if(usermsg == "yes"){
       const twiml = new MessagingResponse();
       twiml.message("You are confirmed! The livestream link and other details will be shared 24-48 hours before the event.");
@@ -274,7 +274,7 @@ app.post('/sms', (req, res) => {
       res.status(200).send(twiml.toString());
       resolve('Success!');
     }
-
+*/
     // Call this to output the schedule.
     function outputSchedule() {
         req.session.choosingClassOption = 1;
