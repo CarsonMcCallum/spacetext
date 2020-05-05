@@ -267,7 +267,7 @@ app.post('/sms', (req, res) => {
     }
 
 
-    if(message == "yes"){
+    if(usermsg == "yes"){
       const twiml = new MessagingResponse();
       twiml.message("You are confirmed! The livestream link and other details will be shared 24-48 hours before the event.");
       res.set('Content-Type', 'text/xml');
@@ -405,7 +405,7 @@ app.post('/sms', (req, res) => {
 
             } else {
 
-              if(message == "yes"){
+              if(usermsg == "yes"){
                 message = "You are confirmed! The livestream link and other details will be shared 24-48 hours before the event.";
               }else{
                 message = "Thanks for your message, if you asked us a question our team will be in touch shortly!";
