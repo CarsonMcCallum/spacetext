@@ -429,7 +429,7 @@ app.post('/sms', (req, res) => {
 
     const twiml = new MessagingResponse();
     twiml.message(message);
-    airtableManager.logUserEvent(_twilioPhoneNumber, 'Outbound', message);
+    airtableManager.logUserEvent(phoneNum, 'Outbound', message);
     airtableManager.logUserEvent(phoneNum, 'Message', usermsg);
 
     /*
