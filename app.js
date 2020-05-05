@@ -408,7 +408,7 @@ app.post('/sms', (req, res) => {
               if(message == "yes"){
                 message = "You are confirmed! The livestream link and other details will be shared 24-48 hours before the event.";
               }else{
-                message = "Thanks for your message, if you asked us a question our team will be in touch shortly.";
+                message = "Thanks for your message, if you asked us a question our team will be in touch shortly!";
                 //message += lineBreak(2);
                 //message += 'To view the class schedule or book an upcoming class reply “BOOK”.'
                 //outputSchedule();
