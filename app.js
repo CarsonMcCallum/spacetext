@@ -269,7 +269,7 @@ app.post('/sms', (req, res) => {
 
     if(message == "yes"){
       const twiml = new MessagingResponse();
-      twiml.message("YOu are confirmed! The livestream link and other details will be shared 24-48 hours before the event.");
+      twiml.message("You are confirmed! The livestream link and other details will be shared 24-48 hours before the event.");
       res.set('Content-Type', 'text/xml');
       res.status(200).send(twiml.toString());
       resolve('Success!');
@@ -404,13 +404,16 @@ app.post('/sms', (req, res) => {
                 }
 
             } else {
+
+              if(message == "yes"){
+                message = "You are confirmed! The livestream link and other details will be shared 24-48 hours before the event.";
+              }else{
                 message = "Thanks for your message, if you asked us a question our team will be in touch shortly.";
                 //message += lineBreak(2);
                 //message += 'To view the class schedule or book an upcoming class reply “BOOK”.'
-
-
                 //outputSchedule();
                 airtableManager.logUserEvent(phoneNum, 'Unrecognized Response', usermsg);
+                }
             }
         } else { // If waitlist status is "Pending".
             console.log('Person is ON waitlist.')
