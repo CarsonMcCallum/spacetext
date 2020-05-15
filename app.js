@@ -446,6 +446,15 @@ app.post('/sms', (req, res) => {
 *   - START HACK -
 */
 
+if(usermsg == "yes"){
+  const twiml = new MessagingResponse();
+  twiml.message("You are confirmed! The livestream link and other details will be shared 24-48 hours before the event.");
+  res.set('Content-Type', 'text/xml');
+  res.status(200).send(twiml.toString());
+  resolve('Success!');
+}
+
+/*
   if(usermsg == "yes"){
     message =+ "You are confirmed! The livestream link and other details will be shared 24-48 hours before the event."
   }else if usermsg !== "yes"{
@@ -454,7 +463,7 @@ app.post('/sms', (req, res) => {
   }
 
 
-
+*/
 
 
 
