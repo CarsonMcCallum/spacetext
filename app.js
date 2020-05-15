@@ -1,4 +1,4 @@
-/*join
+/*
  * SPACE Text messaging service built with Node, express, twilio.
  * Heroku app: spacetext
  * Track an individual session using express-session cookies.
@@ -267,15 +267,6 @@ app.post('/sms', (req, res) => {
     return resp;
   }
 
-
-  if(usermsg == "yes"){
-    message =+ "You are confirmed! The livestream link and other details will be shared 24-48 hours before the event."
-  }else if usermsg !== "yes"{
-    message += "Thanks for your message, if you asked us a question our team will be in touch shortly"';
-    message += "If you meant to confirm your spot, please respond wiht only the text 'YES'";
-  }
-
-
   /*
       if(usermsg == "yes"){
         const twiml = new MessagingResponse();
@@ -285,20 +276,14 @@ app.post('/sms', (req, res) => {
         resolve('Success!');
       }
   */
-  // Call this to output the schedule.
-
 
 
 /*
-* Temporarily disabled for livestreaming
-*
-*
-*
 
 
 
 
-
+  // Call this to output the schedule.
   function outputSchedule() {
     req.session.choosingClassOption = 1;
     message += 'Book an upcoming class by replying with the number of the class you want to book (ie. reply "2").';
@@ -332,7 +317,6 @@ app.post('/sms', (req, res) => {
 
 
   if (typeof phoneNumberAlreadyWaitlisted == "undefined") {
-
     console.log("NOT IN WAITLIST");
     if (usermsg == "join") {
       message = 'We’d love to add you to the SPACE waitlist. What’s your first name?';
@@ -367,7 +351,7 @@ app.post('/sms', (req, res) => {
     //First time contacting.
     else if (smsCount == 0 || usermsg == 'cancel') {
       message = 'Welcome to SPACE. To join the waitlist, reply JOIN.';
-      message += '🚀';``
+      message += '🚀';
       req.session.menuStep = "Welcome";
       airtableManager.logUserEvent(phoneNum, 'First Contact', usermsg);
     }
@@ -431,7 +415,7 @@ app.post('/sms', (req, res) => {
 
         if (usermsg == "yes") {
           message = "You are confirmed! The livestream link and other details will be shared 24-48 hours before the event.";
-        } else if usermsg !== "yes"{
+        } else {
           message = "Thanks for your message, if you asked us a question our team will be in touch shortly!";
           //message += lineBreak(2);
           //message += 'To view the class schedule or book an upcoming class reply “BOOK”.'
@@ -448,11 +432,37 @@ app.post('/sms', (req, res) => {
     var waitlistStatus = "";
   }
 
+}
+/////////////////////////////
+
+*/ // MUST REMOVE ONCE HACK IS DONE (SHOWING LIVESTTREAMING RESPONES ONLY)
 
 
+
+
+/*
+*   Temporarily show all texts livestream responses that confirm spot,
+*   or clarify for questions.
+*   - START HACK -
 */
 
-}
+  if(usermsg == "yes"){
+    message =+ "You are confirmed! The livestream link and other details will be shared 24-48 hours before the event."
+  }else if usermsg !== "yes"{
+    message += "Thanks for your message, if you asked us a question our team will be in touch shortly"';
+    message += "If you meant to confirm your spot, please respond wiht only the text 'YES'";
+  }
+
+
+
+
+
+
+
+
+// - END HACK -//
+///////////////////////
+//good
   // Cookie that counts how many times this person has texted us.
   req.session.counter = smsCount + 1;
 
@@ -460,12 +470,12 @@ app.post('/sms', (req, res) => {
   twiml.message(message);
   airtableManager.logUserEvent(phoneNum, 'Outbound', message);
   airtableManager.logUserEvent(phoneNum, 'Message', usermsg);
+// end good
 
-
-  //  res.writeHead(200, {'Content-Type': 'text/xml'});
-  //  res.end(twiml.toString());
-
-
+  /*
+    res.writeHead(200, {'Content-Type': 'text/xml'});
+    res.end(twiml.toString());
+  */
 
 
   const sendTwimlPromise = new Promise(function(resolve, reject) {
@@ -480,7 +490,11 @@ app.post('/sms', (req, res) => {
     airtableManager.getExistingPhoneNumberSignups();
   });
 
-});
+}); // END OF APP SMS POST
+
+
+
+// HELPERS TO SHOW IF ONLINE STATUS EXISTS
 
 app.get("/", function(req, res) {
   //res.sendFile(indexPg);
