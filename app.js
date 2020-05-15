@@ -446,12 +446,16 @@ app.post('/sms', (req, res) => {
 *   - START HACK -
 */
 
-if(usermsg == "yes"){
-  const twiml = new MessagingResponse();
-  twiml.message("You are confirmed! The livestream link and other details will be shared 24-48 hours before the event.");
-  res.set('Content-Type', 'text/xml');
-  res.status(200).send(twiml.toString());
-  resolve('Success!');
+
+if (usermsg == "yes") {
+    message = "You are confirmed! The livestream link and other details will be shared 24-48 hours before the event.";
+    airtableManager.logUserEvent(phoneNum, 'Confirmed Spot', usermsg);
+} else {
+  message = "Thanks for your message, if you asked us a question our team will be in touch shortly!";
+  //message += lineBreak(2);
+  //message += 'To view the class schedule or book an upcoming class reply “BOOK”.'
+  //outputSchedule();
+  airtableManager.logUserEvent(phoneNum, 'Unrecognized Response', usermsg);
 }
 
 /*
