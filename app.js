@@ -269,8 +269,7 @@ app.post('/sms', (req, res) => {
 
 
   if(usermsg == "yes"){
-
-    message = "You are confirmed! The livestream link and other details will be shared 24-48 hours before the event."
+    message =+ "You are confirmed! The livestream link and other details will be shared 24-48 hours before the event."
   }else if usermsg !== "yes"{
     message += "Thanks for your message, if you asked us a question our team will be in touch shortly"';
     message += "If you meant to confirm your spot, please respond wiht only the text 'YES'";
