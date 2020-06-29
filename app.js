@@ -1,7 +1,9 @@
 /*
  * SPACE Text messaging service built with Node, express, twilio.
  * Heroku app: spacetext
- * Track an individual session using express-session cookies.
+ * - Spacetext is hosted on a Heroku server.
+ * - Twilio phone number: +1 415 223 8333
+ * - Track an individual session using express-session cookies.
  *
  */
 const http = require('http');
