@@ -6,6 +6,7 @@
  * used to sign up for classes, review the class schedule, join the Space
  * waitlist, or ask a question to the team.
  *
+ * Clone of mccallumcarson spacetext (https://github.com/mccallumcarson/spacetext).
  *
  * Heroku app: spacetext
  * - Spacetext is hosted on a Heroku server.
