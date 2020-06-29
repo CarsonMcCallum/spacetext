@@ -1,5 +1,12 @@
 /*
- * SPACE Text messaging service built with Node, express, twilio.
+ * Spacetext - Programmable Short Messaging Service built with
+ * Node, express, twilio.
+ *
+ * Manages incoming and outgoing SMS messages to the Space phone number. Can be
+ * used to sign up for classes, review the class schedule, join the Space
+ * waitlist, or ask a question to the team.
+ *
+ *
  * Heroku app: spacetext
  * - Spacetext is hosted on a Heroku server.
  * - Twilio phone number: +1 415 223 8333
@@ -18,7 +25,7 @@ var fs = require("fs");
 var _twilioPhoneNumber = "+1 415 223 8333";
 
 
-
+// Helper functions for Twilio.
 function read(f) {
   return fs.readFileSync(f).toString();
 }
@@ -40,7 +47,7 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 app.use(session({
-  secret: 'portal-sms-super-secret-sess-phrase'
+  secret: 'portal-sms-spacetext'
 }));
 
 
@@ -51,8 +58,14 @@ var base = new Airtable({
 }).base('appAf7Pd5paoTJGMg');
 
 
-/*
+/* AitableManager ----
  * Custom class for managing all Airtable data.
+ *
+ * getExistingPhoneNumberSignups: Return array with all existing signups.
+ * getSchedule: Get the existing class schedule from the Airtable schedule table.
+ * signUp: Sign up existing community list member for a specific class.
+ * joinWaitlist: Add a new person to the Space waitlit (community list table).
+ * logUserEvent: Log a specific user event in Airtable Event table.
  *
  */
 var AirtableManager = function() {
@@ -72,14 +85,16 @@ var AirtableManager = function() {
 
   this.getExistingPhoneNumberSignups = function() {
     _this.existingPhoneNumbersArray = [];
-    // Return list of exsisting phone numbers
+
+    // Return list of exsisting phone numbers and community list data.
     base('Community List').select({
       view: "API"
     }).eachPage(function page(records, fetchNextPage) {
 
       records.forEach(function(record) {
-        //  console.log('Retrieved', record.get('Full Name'));
-
+      /* Loop through user records, retrieve each user's data, add that data to
+      *  existing user data array.
+      */
         var obj = {
           "phone": record.get('Phone Number'),
           "waitlist": record.get('Waitlist'),
@@ -89,9 +104,9 @@ var AirtableManager = function() {
           "personID": record.get('ID'),
           "receivedOnboardText": record.get('Received Onboarding Text')
         };
+
         _this.existingPhoneNumbersArray.push(obj);
 
-        //  console.log(obj);
       });
       fetchNextPage();
 
@@ -111,11 +126,10 @@ var AirtableManager = function() {
 
 
     base('Schedule').select({
-      // Selecting the first 3 records in Grid view:
+
       filterByFormula: 'Published = 1',
       view: "Grid view"
     }).eachPage(function page(records, fetchNextPage) {
-      // This function (`page`) will get called for each page of records.
 
       records.forEach(function(record) {
         if (record.get('Reserved') != record.get('Capacity')) {}
@@ -161,7 +175,7 @@ var AirtableManager = function() {
         console.log(record.getId());
       });
     });
-  }
+  } // end signUp
 
   this.joinWaitlist = function(firstName, lastName, email, phoneNumber) {
     base('Community List').create([{
@@ -183,7 +197,7 @@ var AirtableManager = function() {
         console.log(record.getId());
       });
     });
-  }
+  } // end joinWaitlist
 
 
   this.logUserEvent = function(phoneNumber, eventType, messageBody = "", username = "") {
@@ -205,23 +219,23 @@ var AirtableManager = function() {
         console.log(record.getId());
       });
     });
+  } // end logUserEvent
 
-  }
-
-
-
-};
+}; // end AirtableManager
 
 
 
-// Init Airtable.
+// Init Airtable Manager.
 var airtableManager = new AirtableManager();
 airtableManager.getSchedule();
 airtableManager.getExistingPhoneNumberSignups();
 
+
+
 /* Refresh interval to get latest schedule every 2 minutes.
  * TO-DO: Figure out faster way to retrieve data, make sure data isn't absent during the call time.
- *
+ * - Done: API calls are more limited and pushed to end of process so user
+ *   experience is faster.
  */
 var updateInterval = setInterval(function() {
   console.log('getExistingPhoneNumberSignups -- ')
@@ -269,22 +283,25 @@ app.post('/sms', (req, res) => {
     return resp;
   }
 
-  /*
-      if(usermsg == "yes"){
-        const twiml = new MessagingResponse();
-        twiml.message("You are confirmed! The livestream link and other details will be shared 24-48 hours before the event.");
-        res.set('Content-Type', 'text/xml');
-        res.status(200).send(twiml.toString());
-        resolve('Success!');
-      }
-  */
+
+
 
 
 /*
+*   For livestreaming of SPACE classes: Temmporarily disable signing up
+*   for classes via text message. Only allow reply for livestreaming
+*   confirmation, and default response that says we'll get back to them
+*   if they asked a question.
+*/
 
-
-
-
+/*
+    if(usermsg == "yes"){
+      const twiml = new MessagingResponse();
+      twiml.message("You are confirmed! The livestream link and other details will be shared 24-48 hours before the event.");
+      res.set('Content-Type', 'text/xml');
+      res.status(200).send(twiml.toString());
+      resolve('Success!');
+    }
   // Call this to output the schedule.
   function outputSchedule() {
     req.session.choosingClassOption = 1;
@@ -437,9 +454,7 @@ app.post('/sms', (req, res) => {
 }
 /////////////////////////////
 
-*/ // MUST REMOVE ONCE HACK IS DONE (SHOWING LIVESTTREAMING RESPONES ONLY)
-
-
+*/ // Remove once hack is done (SHOWING LIVESTTREAMING RESPONES ONLY)
 
 
 /*
@@ -447,7 +462,6 @@ app.post('/sms', (req, res) => {
 *   or clarify for questions.
 *   - START HACK -
 */
-
 
 if (usermsg == "yes") {
     message = "You are confirmed! The livestream link and other details will be shared 24-48 hours before the event.";
@@ -468,30 +482,21 @@ if (usermsg == "yes") {
     message += "If you meant to confirm your spot, please respond wiht only the text 'YES'";
   }
 
-
 */
-
-
-
-
 
 // - END HACK -//
 ///////////////////////
-//good
+
+
+
   // Cookie that counts how many times this person has texted us.
   req.session.counter = smsCount + 1;
 
+  // Initiate twilio messaging response, and log incomning and outgoing messages.
   const twiml = new MessagingResponse();
   twiml.message(message);
   airtableManager.logUserEvent(phoneNum, 'Outbound', message);
   airtableManager.logUserEvent(phoneNum, 'Message', usermsg);
-// end good
-
-  /*
-    res.writeHead(200, {'Content-Type': 'text/xml'});
-    res.end(twiml.toString());
-  */
-
 
   const sendTwimlPromise = new Promise(function(resolve, reject) {
     res.set('Content-Type', 'text/xml');
@@ -509,8 +514,7 @@ if (usermsg == "yes") {
 
 
 
-// HELPERS TO SHOW IF ONLINE STATUS EXISTS
-
+// Helpers to detect uptime status of Heroku server.
 app.get("/", function(req, res) {
   //res.sendFile(indexPg);
   res.send("SPACE text messaging service is currently operational");
@@ -525,15 +529,3 @@ var port = process.env.PORT || 5000;
 http.createServer(app).listen(port, () => {
   console.log('Express server listening on port ' + port);
 });
-
-
-
-/*
-var express = require("express");
-var app = express();
-app.get("/", function (req, res) {
-  res.send("Hello World whats up!");
-});
-app.listen(process.env.PORT, function () {
-  console.log("Example app listening on port 3000!");
-});*/
