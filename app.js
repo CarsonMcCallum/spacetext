@@ -57,8 +57,8 @@ app.use(session({
 
 var Airtable = require('airtable');
 var base = new Airtable({
-  apiKey: 'key2ZI4HYHlIDwlna'
-}).base('appAf7Pd5paoTJGMg');
+  apiKey: '[API KEY]'
+}).base('[BASE]');
 
 
 /* AitableManager ----
